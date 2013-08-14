@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta name="description" content="calculadora sencilla en javascript" />
+<meta name="author" rel="author" content="Fernando Palacios Landi" />
+<title>calculadoraJS</title>
+
+</head>
+
+<body>
+
+<section id="contenedor-ppal">
+	<!-- HEADER
+	-------------------------------->
+	<header id="encabezado">
+		<h1>calculadora en javascript</h1>
+	</header>
+
+	<label for="var-a">variable a</label>
+	<input type="text" id="var-a"/>
+	<select id="operador">
+		<option value="+">mas</option>
+		<option value="-">menos</option>ç
+		<option value="*">multiplicar</option>
+		<option value="/">dividir</option>
+	</select>
+	<label for="var-b">variable b</label>
+	<input type="text" id="var-b">
+	<input type="button" id="calcular" value="calcular"/>
+	<input type="text" id="resultado">
+
+	<!-- FOOTER
+	-------------------------------->
+	<footer id="footer">
+		<div id="autor-footer">
+			<h3>Acerca del Autor</h3>
+			<address>
+				Escrita por: <a rel="author" href="mailto:fernandopalacioslandi@gmail.com">Mail Nando</a><br/>
+				Pagina Web: <a rel="author" href="http://www.cruzalosdedos.es/">Web Nando</a><br/>
+				Repositorio Web: <a rel="author" href="https://github.com/fernandoPalaciosGit/">Github Nando</a><br/>
+				Direccion Local: <q>C/ Mateo Fiol n&ordm;68 - Baleares - <abbr title="españa">ES</abbr></q>
+			</address>
+		</div>
+		<small>&copy; <a rel="licence" href="http://creativecommons.org/licenses/by/2.0/">copyleft</a> 2013</small>
+	</footer>
+</section>
+
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+<script type="text/javascript">
+	// OBJETOS DE JQUERY
+	var $vara = $("#var-a"),
+		 $varb = $("#var-b"),
+		 $calcular = $("#calcular"),
+		 $operador = $("#operador"),
+		 $resultado = $("#resultado");
+
+	// funcion que calcula la operacion de acuerdo al operadoador que el user halla elegido
+	function calcular(){
+		var a = parseInt($vara.val()),
+			 b = parseInt($varb.val()),
+			 op = $operador.val(),
+			 res;
+		// verificamos el operador ,solo una vez
+		if(a==0 || b==0){
+			res = "no se puede operar";
+		}
+		else if ( op == "+"){
+			res = a+b;
+		}else if(op == "-"){
+			res = a-b;
+		}else if(op == "*"){
+			res = a*b;
+		}else{
+			res = a/b;
+		}
+		$resultado.val(res);
+		if ($resultado.val() == "NaN"){
+			res = "no es un calculo";
+		}
+		$resultado.val(res);
+	}
+
+	// manejador de eventos
+	$calcular.on("click", function(){
+		calcular();
+	})
+</script>
+</body>
+</html>

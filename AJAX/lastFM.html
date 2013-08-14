@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta name="author" rel="author" content="Fernando Palacios Landi" />
+<title>buscador artistas</title>
+<style type="text/css">
+#artista-lastFM,
+#errorBusqueda,
+#buscando
+{
+	display: none;
+}
+#artista-lastFM
+{
+	background-color: yellow;
+}
+#errorBusqueda
+{
+	background-color: red;
+}
+#buscando
+{
+	background-color: aqua;
+}
+</style>
+</head>
+
+<body>
+	<h1>Buscador de Artista</h1>
+	<label for="artista">ingresa tu artista favorito</label>
+	<input type="text" id="artista" autofocus="autofocus"/>
+	<input type="button" id="buscar" value="buscar"/>
+	<p id="buscando">...buscando...</p>
+	<article id="artista-lastFM">
+		<header>
+			<h2></h2>
+		</header>
+		<figure id="fotos-artista">
+			<img src="" alt=""/>
+			<img src="" alt=""/>
+			<img src="" alt=""/>
+			<figcaption><a href="">lastFM</a></figcaption>
+		</figure>
+		<p id="bio-artista"></p>
+	</article>
+	<p id="errorBusqueda">el artista que has requerido no se encuentra</p>
+
+
+	<!-- FOOTER
+	-------------------------------->
+	<footer id="footer">
+		<div id="autor-footer">
+			<h3>Acerca del Autor</h3>
+			<address>
+				Escrita por: <a rel="author" href="mailto:fernandopalacioslandi@gmail.com">Mail Nando</a><br/>
+				Pagina Web: <a rel="author" href="http://www.cruzalosdedos.es/">Web Nando</a><br/>
+				Repositorio Web: <a rel="author" href="https://github.com/fernandoPalaciosGit/">Github Nando</a><br/>
+				Direccion Local: <q>C/ Mateo Fiol n&ordm;68 - Baleares - <abbr title="españa">ES</abbr></q>
+			</address>
+		</div>
+		<small>&copy; <a rel="licence" href="http://creativecommons.org/licenses/by/2.0/">copyleft</a> 2013</small>
+	</footer>
+</section>
+
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+<script>
+/*peticion a un servicio de la API de Last.fm, los datos necesarios se encuentran en la URL
+api_key cfcdfea03cd78130c8347d81390dc3d9
+artista: <input/>
+format: "json"
+method: "artist.getinfo"*/
+var $artista = $("#artista"),
+	 $buscar = $("#buscar"),
+	 $artistaFM = $("#artista-lastFM"),
+	 $fotosArtista = $("#artista-lastFM #fotos-artista");
+var key = "cfcdfea03cd78130c8347d81390dc3d9";
+
+//peticion de artista
+function buscarArtista()
+{
+	$artistaFM.css("display", "none");
+	$( document ).ajaxSend(function() {
+		$("#errorBusqueda").css("display", "none");
+  		$("#buscando").css("display", "block");
+	});
+	//por defecto el $ajax es un GET
+	$.ajax({
+		data: {//datos del JSON de la peticion
+			artist: $artista.val(),
+			api_key: key,
+			format: "json",
+			method: "artist.getinfo"//tipo de servicio
+		},
+		url: "http://ws.audioscrobbler.com/2.0/"
+	})
+	.done(presentarArtista);//no le importa el estado de la respuesta
+}
+
+function buscarAlbum()
+{
+	$.ajax({
+		data: {
+			artist: $artista.val(),
+			api_key: key,
+			format: "json",
+			method: "artist.gettopalbums"//tipo de servicio
+		},
+		url: "http://ws.audioscrobbler.com/2.0/"
+	})
+	.done(presentarAlbum);
+}
+
+//utilizamos la informacion devuelta por l server a traves de ajax
+function presentarArtista(data){//DATA: es el objeto de JSON q develve el server
+	var error = data.error;
+	var artista = data.artist;//el objeto raiz de JSON
+	if(error == 6){
+		$("#buscando").css("display", "none");
+		$("#errorBusqueda").css("display", "block");
+	}else{
+		$("#buscando").css("display", "none");
+		$("#errorBusqueda").css("display", "none");
+		$artistaFM.css("display", "block");
+		$artistaFM.find("header>h2").html(artista.name);
+		$fotosArtista.find("img:nth-child(1)").attr("src", artista.image[artista.image.length-1]["#text"]);
+		$fotosArtista.find("img").attr("alt", "imagen lastFM de "+artista.name);
+		$fotosArtista.find("figcaption>a").attr("href", artista.url);
+		$artistaFM.find("#bio-artista").html(artista.bio.summary);
+	}
+}
+
+function presentarAlbum(data)
+{
+	var album = data.topalbums;
+	if(album.album){
+		$fotosArtista.find("img:nth-child(2)").css("display", "inline").attr("src", album.album[0].image[2]["#text"]);
+		$fotosArtista.find("img:nth-child(3)").css("display", "inline").attr("src", album.album[1].image[2]["#text"]);
+	}else{
+		$fotosArtista.find("img:nth-child(2)").css("display", "none");
+		$fotosArtista.find("img:nth-child(3)").css("display", "none");
+	}
+}
+
+//manejador de eventos de click raton
+$buscar.on("click", function(){
+	buscarArtista();
+	buscarAlbum();
+});
+$artista.on("keyup", function(evento){
+	if(evento.which == 13){
+		buscarArtista();
+		buscarAlbum();
+	}
+});
+</script>
+</body>
+</html>

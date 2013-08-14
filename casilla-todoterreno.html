@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>casilla-todoterreno</title>
+</head>
+<body>
+	<p>El objeivo es sustituir una casilla de verificacion normal por una construida absolutamente en javascript.<br/>
+	aunque este oculta por el script, se mantendra activa su funcionalidad en caso de enviar recursos de peticion al servidor</p>
+
+	<h1>CheckBox grafico con javascript</h1>
+	<form action="" name="foo" method="post">
+		<p><input type="checkbox" name="check1" id="check1"/><label> :checkbox ordinario</label></p>
+		<p><input type="checkbox" name="check2" id="check2"/><label> :checkbox grafico, creado con un javascript</label></p>
+	</form>
+	<script type="text/javascript">
+		/*EJECTAR LA CASILLA GRAFICA*/
+		var checkGraf = document.getElementById("check2");
+		window.addEventListener("load", init, false);
+		function init(){
+			if(!document.addEventListener) return;
+			console.log("javascript iniciado");
+			graficBox(checkGraf);
+		}
+
+		/*CONTROLAR EL EVENTO DEL CLICK*/
+		function graficBox(box){
+			/*box = <input id="check2">*/
+			parentBox = box.parentNode;
+			box.style.visibility="hidden";
+			/*creamos un elemento de magen*/
+			img = document.createElement("img");
+			img.src="imagenes/unchecked.gif";
+			img.id="img"+checkGraf;
+			parentBox.insertBefore(img, box);
+
+			/*definimos su click*/
+			img.onclick = toogleBox;
+		}
+
+		/*CAMBIAR LA IMAGEN*/
+		function toogleBox(event){
+			console.log("click img");
+			img = event.target
+			/*buscamos la casilla a traves de su id, eliminando 'img' del id'*/
+			checkimg = img.id.substring(3);
+			checkBox = document.getElementById(checkimg);
+
+			/*hacemos clik en la casilla de vericacion*/
+			checkBox.addEventListener("click");/*ahora el check/no-check*/
+
+			/*mostramos la imagen adecuada*/
+			if(checkBox.checked){
+				img.src="imagenes/checked.png";
+			}else img.src="imagenes/unchecked.gif";
+		}
+
+
+	</script>
+</body>
+</html>

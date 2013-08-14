@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>geolocalizacion</title>
+</head>
+	<style type="text/css">
+		/*PREDETERMINADO
+		------------------------------*/
+		article,aside,section,footer,header,div,figcaption,
+		figure,hgroup,nav, li{ /*resetear valores para navegadores obsoletos*/
+		    display:block;
+		}
+
+		body{
+			margin:0px auto;
+			padding: 0px auto;
+			cursor: auto;
+		}
+
+		/*WRAPPER*/
+		#contenedor-ppal{
+			width:900px;/*RESPONSIVE DESIGN*/
+			margin: 0px auto;
+			padding: 0px auto;
+			margin-top:50px;
+			margin-bottom:50px;
+
+			background-color: peru;
+			box-shadow:5px 5px 10px rgba(0,0,0,0.5);
+			border-radius:5px 5px 5px 5px;
+			padding:50px 25px;
+
+			font-family: Helvetica, Arial;
+			font-size: 16px;
+			color: white;
+		}
+
+		a, a:LINK, a:VISITED, a:HOVER {
+			text-decoration: none; /*renderizado*/
+		}
+
+		a:HOVER{
+			border-bottom: 1px dotted black;
+		}
+
+		li{
+			list-style-type: none; /*tipo de enumeracion, renderizado*/
+			padding: 6px 12px; /*IMP*/
+		}
+	</style>
+<body>
+
+
+
+	<script type="text/javascript">
+		var lat, long, velocidad, vector;
+		window.addEventListener("load", init, false);
+		function init(){
+			console.log("script iniciado, ahora");
+			geolocalizar();
+			console.log(lat, long, velocidad, vector);
+			document.write(lat+" "+long+" "+velocidad+" "+vector);
+		};
+
+		function geolocalizar(){
+			/*"navigator.geolocation": objeto del nucleo de javascript que localiza el navegador*/
+			/*"getCurrentPosition()": metodo que invoca los objetos de GPS*/
+			navigator.geolocation.getCurrentPosition(mostrar, errorLocalizar);
+			console.log(lat, long, velocidad, vector);
+		};
+
+		/*metodo que se invoca cuando no funciona la localizacion*/
+		function errorLocalizar(error){
+			alert("Tarde o temprano te encontrare ¬_¬");
+			/*hacer un debug en la consola de los motivos del error*/
+			console.log(error);
+		};
+
+		/*funciona la localizacion*/
+		function mostrar(geo){
+			lat=geo.coords.latitude;
+			long=geo.coords.longitude;
+			velocidad=geo.coords.speed;
+			vector=geo.coords.heading; /*vector de movimiento, direccion hacia donde apuntamos, es una brujula*/
+			/*TB: altitud, aceleracion, y grados hacia donde nos movemos*/
+		};
+
+		/*OBVIAMENT: en la mayoria de casos , la localizacion solo funciona cargada desde un servidor; local o hosting*/
+		/*not tan OBVIO: el usuario debe dar permisos de geolocalizar, sino, se dispara la funcion de errorLocalizar()*/
+
+		/*¿Y ahora  que?*/
+
+	</script>
+</body>
+</html>

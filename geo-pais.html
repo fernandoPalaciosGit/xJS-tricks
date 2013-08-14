@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta name="description" content="geolocalizacion de pais con un api de terceros" />
+<meta name="author" rel="author" content="Fernando Palacios Landi" />
+<title>geolocalizar paises</title>
+<style type="text/css">
+#lat>strong,
+#long>strong,
+#speed>strong,
+#heading>strong
+{
+	position: relative;
+	border-bottom: dashed 1px #0090ff;
+}
+#lat>strong:before,
+#long>strong:before,
+#speed>strong:before,
+#heading>strong:before
+{
+	content: "";
+	position: absolute;
+	border-top: 7px solid #0090ff;
+	border-left: 10px solid transparent;
+	border-right: 10px solid transparent;
+	top: -8px;
+	left: 4px;
+	display: none;
+}
+#lat>strong:after,
+#long>strong:after,
+#speed>strong:after,
+#heading>strong:after
+{
+	font-size: 13px;
+	color: white;
+	background-color: #0090ff;
+	position: absolute;
+	letter-spacing: 2px;
+	top: -30px;
+	left: -5px;
+	padding: 3px 10px;
+	border-radius: 10px;
+	display: none;
+}
+#lat>strong:hover:after,
+#lat>strong:hover:before,
+#long>strong:hover:after,
+#long>strong:hover:before,
+#speed>strong:hover:after,
+#speed>strong:hover:before,
+#heading>strong:hover:after,
+#heading>strong:hover:before
+{
+	display: block;
+}
+#lat>strong:after
+{
+	content: "geo.coords.latitude";
+}
+#long>strong:after
+{
+	content: "geo.coords.longitude";
+}
+#speed>strong:after
+{
+	content: "geo.coords.speed";
+}
+#heading>strong:after
+{
+	content: "geo.coords.heading";
+}
+#geoNativo mark
+{
+	margin-left: 50px;
+}
+</style>
+</head>
+
+<body>
+<header>
+	<h1>geolocalizar paises con javascript</h1>
+</header>
+<section>
+	<article id="geoNativo">
+		<header>
+			<h2>datos obtenidos por javascript a peticion del server</h2>
+		</header>
+		<p><strong>navigator.getCurrentPosition ( localizar, errorLocalizar )</strong></p>
+		<ul>
+			<li id="lat"><strong>latitud donde se localiza nuestro navegador</strong><br/><mark></mark></li>
+			<li id="long"><strong>latitud donde se localiza nuestro navegador</strong><br/><mark></mark></li>
+			<li id="speed"><strong>velocidad de movimiento</strong><br/><mark></mark></li>
+			<li id="heading"><strong>vector de movimiento, direccion hacia donde apuntamos, es una brujula</strong><br><mark></mark></li>
+		</ul>
+	</article>
+	<article>
+		<header>
+			<h2>datos obtenidos por la API de <em>geonames</em></h2>
+		</header>
+		<p>
+			<strong>API de terceros</strong></br>
+			<a href="http://www.geonames.org/export/web-services.html">documentacio para developers</a></br>
+			<a href="http://www.geonames.org/export/ws-overview.html">API: <em>geonames</em></a>
+		</p>
+		<p>
+			<ul>
+				<li id="pais">pais: <mark class="nom"></mark> : <mark class="code"></mark></li>
+				<li id="cont">continente: <mark class="nom"></mark> : <mark class="code"></mark></li>
+				<li id="area">Area: <mark></mark>Km2</li>
+				<li id="pobla">Poblacion: <mark></mark> habitantes</li>
+			</ul>
+		</p>
+	</article>
+</section>
+
+<!-- FOOTER
+-------------------------------->
+<footer id="footer">
+	<div id="autor-footer">
+		<h3>Acerca del Autor</h3>
+		<address>
+			Escrita por: <a1 rel="author" href="mailto:fernandopalacioslandi@gmail.com">Mail Nando</a><br/>
+			Pagina Web: <a rel="author" href="http://www.cruzalosdedos.es/">Web Nando</a><br/>
+			Repositorio Web: <a rel="author" href="https://github.com/fernandoPalaciosGit/">Github Nando</a><br/>
+			Direccion Local: <q>C/ Mateo Fiol n&ordm;68 - Baleares - <abbr title="españa">ES</abbr></q>
+		</address>
+	</div>
+	<small>&copy; <a rel="licence" href="http://creativecommons.org/licenses/by/2.0/">copyleft</a> 2013</small>
+</footer>
+
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+<script type="text/javascript">
+$latitud = $("#lat mark");
+$longitud = $("#long mark");
+$velocidad = $("#speed mark");
+$vector = $("#heading mark");
+$paisNom = $("#pais .nom");
+$paisCode = $("#pais .code");
+$contNom = $("#cont .nom");
+$contCode = $("#cont .code");
+var param = {lat:"", lon:"", vel:"", vec:""}, pais, codigoPais;
+geolocalizar();
+function geolocalizar(){
+	navigator.geolocation.getCurrentPosition(localizar, errorLocalizar);
+}
+function localizar(geo)
+{
+	param.lat = geo.coords.latitude;
+	param.lon = geo.coords.longitude;
+	param.vel = geo.coords.speed;
+	param.vec = geo.coords.heading;
+	for(var i in param){
+		if(param[i] == null){
+			param[i] = "no se halla el parametro";
+		}
+	}
+	$latitud.html(param.lat);
+	$longitud.html(param.lon);
+	$velocidad.html(param.vel);
+	$vector.html(param.vec);
+	/*debug del objeto geo*/
+	console.log(geo);
+
+	//GEONAMES - countryCode
+	$.get("http://ws.geonames.org/countryCode", {
+		type: "JSON",
+		lat: param.lat,
+		lng: param.lon
+	}, function(data){
+		pais = data.countryName;
+		codigoPais = data.countryCode;
+		$paisNom.html(pais);
+	});
+
+	//GEONAMES - countryInfo
+	$.get("http://ws.geonames.org/countryInfo", {
+		type: "JSON",
+		country: codigoPais //!!!!ERROOOOOOOR; tiene que se "ES"
+	}, function(data){
+		console.log(data);
+	});
+}
+function errorLocalizar(error)
+{
+	alert("Tarde o temprano te encontrare ¬_¬\n\nSe ha denegado la localozacion de tu PC");
+	$("#geoNativo mark").html("no se podido geolocalizar");
+	/*hacer un debug en la consola de los motivos del error*/
+	console.log(error);
+}
+</script>
+</body>
+</html>

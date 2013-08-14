@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta name="description" content="notas webusando la apide html5 WEBSTORAGE" />
+<meta name="author" rel="author" content="Fernando Palacios Landi" />
+<title>notas con webStorage</title>
+<style type="text/css">
+html
+{
+	font-size: 16px;
+}
+#form-Notas>fieldset>p
+{
+	display: inline-block;
+	text-align: center;
+	margin: 20px 0;
+	padding: 0;
+}
+#form-Notas>fieldset>p:nth-child(2)
+{
+	width: 350px;
+	float: left;
+	margin-left: 5%;
+}
+#form-Notas>fieldset>p:nth-child(3)
+{
+	width: 150px;
+	float: left;
+	margin-left: 5%;
+}
+#form-Notas>fieldset>p>*
+{
+	display: block;
+	width: 100%;
+}
+label
+{
+	font-size: 1.25rem;
+}
+select
+{
+	text-transform: uppercase;
+	text-indent: 25%;
+}
+</style>
+</head>
+
+<body>
+<section id="contenedor-ppal">
+
+	<header>
+		<h1>Notas de autores</h1>
+		<p>se trata de usar la API de HTML5 -Local Storage-
+			para almacenar informacion desde el navegador web
+			y en el disco del cliente,
+			sin necesidad de interactuar con un server ni conb cookies</p>
+	</header>
+	<form action="" id="form-Notas" method="">
+		<fieldset>
+			<legend>Selecciona un color para la NOtas de autor que escribes</legend>
+			<p>
+				<label for="nota">Nota de autor</label>
+				<textarea id="nota" autofocus="autofocus"></textarea>
+			</p>
+			<p>
+				<label for="color">Color de la Nota</label>
+				<select id="color">
+					<option value="white">blanco</option>
+					<option value="pink">rosado</option>
+					<option value="LightGrey">gris</option>
+					<option value="lightyellow">amarillo</option>
+				</select>
+			</p>
+		</fieldset>
+		<input type="button" id="submit" value="salvar la NOTA!!">
+	</form>
+
+	<ul id="notas">
+	</ul>
+
+
+	<!-- FOOTER
+	-------------------------------->
+	<footer id="footer">
+		<div id="autor-footer">
+			<h3>Acerca del Autor</h3>
+			<address>
+				Escrita por: <a rel="author" href="mailto:fernandopalacioslandi@gmail.com">Mail Nando</a><br/>
+				Pagina Web: <a rel="author" href="http://www.cruzalosdedos.es/">Web Nando</a><br/>
+				Repositorio Web: <a rel="author" href="https://github.com/fernandoPalaciosGit/">Github Nando</a><br/>
+				Direccion Local: <q>C/ Mateo Fiol n&ordm;68 - Baleares - <abbr title="españa">ES</abbr></q>
+			</address>
+		</div>
+		<small>&copy; <a rel="licence" href="http://creativecommons.org/licenses/by/2.0/">copyleft</a> 2013</small>
+	</footer>
+</section>
+
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+<script type="text/javascript">
+window.addEventListener("load", function(){
+	if(!window.localStorage){
+		alert("Tu navegador NO acepta la api de localStorage!!");
+	}else{
+		cargarNotas();//sihay almacenado algo en LocalStorage, las mostramos
+	}
+}, false);
+
+//VARIABLES GLOBALES
+var notas = [];
+var KEY = "notas en local storage";
+var submit = document.getElementById("submit");
+var notaArea = document.getElementById("nota");
+var colorSelect = document.getElementById("color");
+var notasUl = document.getElementById("notas");
+
+submit.addEventListener("click", crearNota, false);
+notaArea.addEventListener("keydown", function(evento){
+	if(evento.which == 13){
+		crearNota();
+	}
+}, false);
+
+function crearNota(){
+	var textoNota = notaArea.value,
+		 index,
+		 colorNota;
+	if(textoNota == "" || textoNota == null || textoNota.length == 0){
+		alert("introduce una NOTA");
+		return; //salimos del metodo
+	}else{
+		notaArea.value = "";
+	}
+	index = colorSelect.selectedIndex;
+	colorNota = colorSelect[index].value;
+	var nota = {texto: textoNota, color: colorNota};
+	notas.push(nota);//almacenamos en nuestro array las notas
+	almacenarNotas();//almacenamos las notas escritas en el navegador
+	anyadirNotas(nota);//MOSTRAR LAS NOTAS
+}
+
+function anyadirNotas(nota){
+	var notasLi = document.createElement("li");
+	notasLi.innerHTML = nota.texto;
+	notasLi.style.backgroundColor = nota.color;
+	if(notasUl.childElementCount > 0){//nuestra nota en la 1ª de la lista
+		notasUl.insertBefore(notasLi, notasUl.firstChild)
+	}else{
+		notasUl.appendChild(notasLi);
+	}
+}
+
+function almacenarNotas()
+{
+	//del array vacio de  notas = [], obtenemos una cadena para JSON
+	var jsonNotas = JSON.stringify(notas);
+	//este string de JSON lo almmacenamos en localstorage
+	localStorage.setItem(KEY, jsonNotas);
+}
+
+function cargarNotas(){
+	//para recuperarlas, solo necesitamos la llave
+	var jsonNotas = localStorage.getItem(KEY);
+	//obtenemos un JSON a partir de la cadena
+	if( jsonNotas != null){
+		notas = JSON.parse(jsonNotas);
+		for(var i in notas){
+			anyadirNotas(notas[i]);
+		}
+	}
+}
+</script>
+</body>
+</html>

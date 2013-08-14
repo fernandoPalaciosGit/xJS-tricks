@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta name="description" content="calculadora sencilla en javascript" />
+<meta name="author" rel="author" content="Fernando Palacios Landi" />
+<title>calculadoraJS</title>
+
+</head>
+
+<body>
+
+<section id="contenedor-ppal">
+	<!-- HEADER
+	-------------------------------->
+	<header id="encabezado">
+		<h1>contador de vocales</h1>
+	</header>
+	<label for="frase">ingresa tu frase</label>
+	<input type="text" id="frase" autofocus="autofocus"/>
+	<input type="button" id="contar" value="contar vocales">
+	<div id="resultados">
+		<ul>
+			<li id="a-vocal">A: <span class="res"></span></li>
+			<li id="e-vocal">E: <span class="res"></span></li>
+			<li id="i-vocal">I: <span class="res"></span></li>
+			<li id="o-vocal">O: <span class="res"></span></li>
+			<li id="u-vocal">U: <span class="res"></span></li>
+		</ul>
+	</div>
+
+
+	<!-- FOOTER
+	-------------------------------->
+	<footer id="footer">
+		<div id="autor-footer">
+			<h3>Acerca del Autor</h3>
+			<address>
+				Escrita por: <a rel="author" href="mailto:fernandopalacioslandi@gmail.com">Mail Nando</a><br/>
+				Pagina Web: <a rel="author" href="http://www.cruzalosdedos.es/">Web Nando</a><br/>
+				Repositorio Web: <a rel="author" href="https://github.com/fernandoPalaciosGit/">Github Nando</a><br/>
+				Direccion Local: <q>C/ Mateo Fiol n&ordm;68 - Baleares - <abbr title="españa">ES</abbr></q>
+			</address>
+		</div>
+		<small>&copy; <a rel="licence" href="http://creativecommons.org/licenses/by/2.0/">copyleft</a> 2013</small>
+	</footer>
+</section>
+
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+<script type="text/javascript">
+	// variables globales
+	var $frase = $("#frase"),
+		 $contar = $("#contar"),
+		 $vocales = "aeiou";//verificar esta cadena con las letras de la frase del input
+
+	//contamos las vocales
+	function contarVocales(){
+		var frase = $frase.val().toLowerCase(),//cuando leemos el texto, nos aseguramos de que este en minuscula
+			 letra,
+			 res = {a:0, e:0, i:0, o:0, u:0 };//objeto que almacena la can,tidad de vocales
+		for (var i = 0; i < frase.length; i++) {
+			letra = frase[i];
+			if($vocales.indexOf(letra) != -1){//si existe ese caracter de la frase como letra que escribimos en el input
+				res[letra]++;
+			}
+		};
+		console.log(res);//hacemos un debugger del objeto que almacena las vocales
+		//para iterar sobre un objeto: for (in)
+		for (var key in res){
+			$("#"+key+"-vocal .res")[0].innerHTML = res[key];
+		}
+	}
+
+	//manejador de eventos
+	$contar.on("click", function(){
+		contarVocales();
+	});
+	$frase.on("keyup", function(evento){
+		if(evento.which == 13)//evento.keyCode
+		contarVocales();
+	});
+</script>
+</body>
+</html>
